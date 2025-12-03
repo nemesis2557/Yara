@@ -24,7 +24,17 @@ interface OrdersContextValue {
   notes: NoteCompra[];
   createOrderFromCart: (cartItems: ItemCarrito[]) => Order | null;
   updateOrderStatus: (orderId: string, status: OrderStatus) => void;
-  registerPayment: (orderId: string, method: PaymentMethod) => void;
+  registerPayment: (
+    orderId: string,
+    payload: {
+      method: PaymentMethod;
+      numeroOperacion?: string;
+      fotoYapeUrl?: string;
+      nombreCliente?: string;
+      cashierId?: string;
+      cashierName?: string;
+    },
+  ) => void;
   cancelOrder: (orderId: string) => void;
   addNote: (text: string) => void;
   deleteNote: (noteId: string) => void;
@@ -69,6 +79,117 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     saveToStorage(NOTES_KEY, notes);
   }, [notes]);
+
+  useEffect(() => {
+    if (orders.length === 0 && user) {
+      const seedOrders: Order[] = [
+        {
+          id: nanoid(),
+          orderNumber: 1,
+          description: "Café americano + croissant",
+          total: 18,
+          status: "pending",
+          createdAt: new Date().toISOString(),
+          createdById: user.id,
+          createdByName: user.name || "Mesero",
+          items: [
+            {
+              id: nanoid(),
+              productId: "cafe-1",
+              name: "Café americano",
+              quantity: 1,
+              unitPrice: 8,
+              variant: "Mediano",
+            },
+            {
+              id: nanoid(),
+              productId: "pan-1",
+              name: "Croissant",
+              quantity: 1,
+              unitPrice: 10,
+            },
+          ],
+          paymentMethod: null,
+        },
+        {
+          id: nanoid(),
+          orderNumber: 2,
+          description: "Latte vainilla",
+          total: 12,
+          status: "cooking",
+          createdAt: new Date(Date.now() - 10 * 60 * 1000).toISOString(),
+          createdById: user.id,
+          createdByName: user.name || "Mesero",
+          items: [
+            {
+              id: nanoid(),
+              productId: "cafe-2",
+              name: "Latte vainilla",
+              quantity: 1,
+              unitPrice: 12,
+              variant: "Grande",
+            },
+          ],
+          paymentMethod: null,
+        },
+        {
+          id: nanoid(),
+          orderNumber: 3,
+          description: "Capuccino + brownie",
+          total: 22,
+          status: "ready",
+          createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+          createdById: user.id,
+          createdByName: user.name || "Mesero",
+          items: [
+            {
+              id: nanoid(),
+              productId: "cafe-3",
+              name: "Capuccino",
+              quantity: 1,
+              unitPrice: 12,
+            },
+            {
+              id: nanoid(),
+              productId: "postre-1",
+              name: "Brownie",
+              quantity: 1,
+              unitPrice: 10,
+            },
+          ],
+          paymentMethod: null,
+        },
+        {
+          id: nanoid(),
+          orderNumber: 4,
+          description: "Moka frío",
+          total: 15,
+          status: "paid",
+          createdAt: new Date(Date.now() - 60 * 60 * 1000).toISOString(),
+          createdById: user.id,
+          createdByName: user.name || "Mesero",
+          items: [
+            {
+              id: nanoid(),
+              productId: "cafe-4",
+              name: "Moka frío",
+              quantity: 1,
+              unitPrice: 15,
+            },
+          ],
+          paymentMethod: "efectivo",
+          paidAt: new Date(Date.now() - 55 * 60 * 1000).toISOString(),
+          paymentDetails: {
+            method: "efectivo",
+            cashierId: user.id,
+            cashierName: user.name || "Cajero",
+          },
+        },
+      ];
+
+      setOrders(seedOrders);
+    }
+  }, [orders.length, user]);
 
   const getNextOrderNumber = () => {
     const today = new Date().toISOString().slice(0, 10);
@@ -124,11 +245,34 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const registerPayment = (orderId: string, method: PaymentMethod) => {
+  const registerPayment = (
+    orderId: string,
+    {
+      method,
+      numeroOperacion,
+      fotoYapeUrl,
+      nombreCliente,
+      cashierId,
+      cashierName,
+    },
+  ) => {
     setOrders((prev) =>
       prev.map((o) =>
         o.id === orderId
-          ? { ...o, status: "paid", paymentMethod: method }
+          ? {
+              ...o,
+              status: "paid",
+              paymentMethod: method,
+              paidAt: new Date().toISOString(),
+              paymentDetails: {
+                method,
+                numeroOperacion,
+                fotoYapeUrl,
+                nombreCliente,
+                cashierId,
+                cashierName,
+              },
+            }
           : o,
       ),
     );
@@ -170,7 +314,7 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       addNote,
       deleteNote,
     }),
-    [orders, notes],
+    [orders, notes, createOrderFromCart, updateOrderStatus, registerPayment, cancelOrder, addNote, deleteNote],
   );
 
   return (
