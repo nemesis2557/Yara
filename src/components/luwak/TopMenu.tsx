@@ -1,30 +1,37 @@
-"use client";
+import React from "react";
 
-import Link from "next/link";
-import { useAuth } from "@/components/auth/AuthProvider";
+export type UserRole = "admin" | "mesero" | "cajero";
 
-export function TopMenu() {
-  const { user } = useAuth();
+interface User {
+  role: UserRole;
+}
 
-  if (!user) return null;
+interface MenuLink {
+  href: string;
+  label: string;
+  roles: UserRole[];
+}
 
-  const links = (
-    [
-      { href: "/inicio", label: "Inicio", roles: ["admin", "mesero", "ayudante", "chef"] },
-      { href: "/pedidos", label: "Pedidos", roles: ["admin", "mesero", "ayudante"] },
-      { href: "/listos", label: "Listos", roles: ["admin", "mesero", "cajero", "ayudante"] },
-      { href: "/pagados", label: "Pagados", roles: ["admin", "mesero", "cajero"] },
-    ] as const
-  ).filter((link) => link.roles.includes(user.role));
+export default function TopMenu({ user }: { user: User }) {
+  const links: MenuLink[] = [
+    { href: "/", label: "Inicio", roles: ["admin", "mesero", "cajero"] },
+    { href: "/pedidos", label: "Pedidos", roles: ["admin", "mesero"] },
+    { href: "/caja", label: "Caja", roles: ["admin", "cajero"] },
+    { href: "/pagados", label: "Pagados", roles: ["admin", "mesero", "cajero"] }
+  ];
 
-  if (links.length === 0) return null;
+  const visibleLinks = links.filter((link) =>
+    link.roles.includes(user.role)
+  );
+
+  if (visibleLinks.length === 0) return null;
 
   return (
-    <nav className="w-full bg-white shadow px-4 py-3 mb-4 rounded-xl flex gap-3 text-sm">
-      {links.map((link) => (
-        <Link key={link.href} href={link.href} className="text-[#6B4423] font-semibold hover:text-[#a05c2a]">
+    <nav className="flex gap-4 p-4 bg-gray-100">
+      {visibleLinks.map((link) => (
+        <a key={link.href} href={link.href} className="text-blue-600 font-semibold">
           {link.label}
-        </Link>
+        </a>
       ))}
     </nav>
   );
