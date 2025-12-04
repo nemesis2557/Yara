@@ -65,7 +65,7 @@ export function LoginForm({
         {/* 👇 Logo responsive (PC / laptop / pantallas pequeñas) */}
         <div className="mt-2 w-full max-w-[380px] md:max-w-[440px] h-40 md:h-52 relative">
           <Image
-            src="/IMG-HEADER/LogoLuwak.WEBP"
+            src="/img-header/LogoLuwak.WEBP"
             alt="Logo Luwak"
             fill
             className="object-contain"

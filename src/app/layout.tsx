@@ -11,6 +11,9 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "LUWAK Manager - Sistema POS",
   description: "Sistema de gestión para cafetería LUWAK",
+  icons: {
+    icon: "/img-header/LogoLuwak.WEBP", // ← FAVICON AÑADIDO
+  },
 };
 
 export default function RootLayout({
