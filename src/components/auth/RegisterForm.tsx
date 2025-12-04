@@ -42,7 +42,8 @@ export function RegisterForm({
   onSuccess,
   onSwitchToLogin,
 }: RegisterFormProps) {
-  const { register: registerUser } = useAuth();
+  const { register: registerUser } = useAuth(); // ← RESTAURADO
+
   const [currentStep, setCurrentStep] = useState<1 | 2>(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -70,18 +71,13 @@ export function RegisterForm({
       });
 
       if (!response) {
-        setError(
-          response.errorMessage || "Failed to send the verification code"
-        );
+        setError("Failed to send verification code");
         return false;
       }
 
       return true;
     } catch (err: any) {
-      setError(
-        err.errorMessage ||
-          "Failed to send the verification code. Please try again later"
-      );
+      setError("Failed to send verification code");
       return false;
     } finally {
       setIsLoading(false);
@@ -110,9 +106,7 @@ export function RegisterForm({
 
   useEffect(() => {
     if (currentStep === 2 && firstOtpRef.current) {
-      setTimeout(() => {
-        firstOtpRef.current?.focus();
-      }, 100);
+      setTimeout(() => firstOtpRef.current?.focus(), 100);
     }
   }, [currentStep]);
 
@@ -126,11 +120,10 @@ export function RegisterForm({
         userPassword,
         data.passcode
       );
+
       onSuccess?.();
     } catch (err: any) {
-      setError(
-        err.errorMessage || "Registration failed. Please try again later"
-      );
+      setError("Registration failed. Please try again later");
     } finally {
       setIsLoading(false);
     }
@@ -179,6 +172,7 @@ export function RegisterForm({
           </div>
         </div>
       </div>
+
       <div className="p-6 pt-0">
         {error && (
           <Alert variant="destructive" className="mb-4">
@@ -225,18 +219,14 @@ export function RegisterForm({
               )}
             </div>
 
-            <Button
-              type="submit"
-              className="w-full my-[10px]"
-              disabled={isLoading}
-            >
+            <Button type="submit" className="w-full my-[10px]" disabled={isLoading}>
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               Create
             </Button>
 
             {onSwitchToLogin && (
               <div className="text-center text-sm flex items-center justify-center gap-2">
-                <span className="text-center text-muted-foreground">
+                <span className="text-muted-foreground">
                   Already have an account?
                 </span>
                 <button
@@ -274,37 +264,22 @@ export function RegisterForm({
                     }
                   >
                     <InputOTPGroup className="gap-2">
-                      <InputOTPSlot
-                        ref={firstOtpRef}
-                        index={0}
-                        className="rounded-md border border-input"
-                      />
-                      <InputOTPSlot
-                        index={1}
-                        className="rounded-md border border-input"
-                      />
-                      <InputOTPSlot
-                        index={2}
-                        className="rounded-md border border-input"
-                      />
-                      <InputOTPSlot
-                        index={3}
-                        className="rounded-md border border-input"
-                      />
-                      <InputOTPSlot
-                        index={4}
-                        className="rounded-md border border-input"
-                      />
-                      <InputOTPSlot
-                        index={5}
-                        className="rounded-md border border-input"
-                      />
+                      {[0, 1, 2, 3, 4, 5].map((i) => (
+                        <InputOTPSlot
+                          key={i}
+                          ref={i === 0 ? firstOtpRef : undefined}
+                          index={i}
+                          className="rounded-md border border-input"
+                        />
+                      ))}
                     </InputOTPGroup>
                   </InputOTP>
                 </div>
+
                 <div className="text-center text-sm text-muted-foreground">
                   Enter the verification code sent to your email
                 </div>
+
                 {verificationForm.formState.errors.passcode && (
                   <p className="text-sm text-red-500 text-center">
                     {verificationForm.formState.errors.passcode.message}
@@ -312,11 +287,7 @@ export function RegisterForm({
                 )}
               </div>
 
-              <Button
-                type="submit"
-                className="w-full my-[10px]"
-                disabled={isLoading}
-              >
+              <Button type="submit" className="w-full my-[10px]" disabled={isLoading}>
                 {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Verify Email
               </Button>

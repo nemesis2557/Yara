@@ -9,7 +9,7 @@ import React, {
 } from "react";
 import type { UserRole } from "@/types/luwak";
 
-export const ADMIN_CODE = "1234"; // código para cancelar/editar pedidos, etc.
+export const ADMIN_CODE = "1234";
 
 export interface User {
   id: string;
@@ -23,11 +23,12 @@ interface AuthContextValue {
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => void;
+  register: (name: string, email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
-// --- Usuarios de prueba ---
+// Usuarios de prueba
 const TEST_USERS: { email: string; password: string; user: User }[] = [
   {
     email: "admin@luwak.test",
@@ -56,7 +57,7 @@ const TEST_USERS: { email: string; password: string; user: User }[] = [
       id: "u-cajero",
       name: "Cajero Luis",
       email: "caja@luwak.test",
-      role: "cajero", // IMPORTANTE: coincide con UserRole = "cajero"
+      role: "cajero",
     },
   },
   {
@@ -102,16 +103,13 @@ function saveUserToStorage(user: User | null) {
     } else {
       localStorage.removeItem(STORAGE_KEY);
     }
-  } catch {
-    // ignore
-  }
+  } catch {}
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Cargar usuario guardado
   useEffect(() => {
     const stored = loadUserFromStorage();
     if (stored) {
@@ -121,7 +119,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    // aquí en el futuro se reemplaza por llamada a backend / Supabase
     const match = TEST_USERS.find(
       (u) =>
         u.email.toLowerCase() === email.toLowerCase() &&
@@ -136,6 +133,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     saveUserToStorage(match.user);
   };
 
+  const register = async (name: string, email: string, password: string) => {
+    const newUser: User = {
+      id: crypto.randomUUID(),
+      name,
+      email,
+      role: "mesero",
+    };
+
+    setUser(newUser);
+    saveUserToStorage(newUser);
+  };
+
   const logout = () => {
     setUser(null);
     saveUserToStorage(null);
@@ -146,6 +155,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoading,
     login,
     logout,
+    register,
   };
 
   return (
