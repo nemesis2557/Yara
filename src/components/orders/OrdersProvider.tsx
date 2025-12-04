@@ -254,6 +254,13 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
       nombreCliente,
       cashierId,
       cashierName,
+    }: {
+      method: PaymentMethod;
+      numeroOperacion?: string;
+      fotoYapeUrl?: string;
+      nombreCliente?: string;
+      cashierId?: string;
+      cashierName?: string;
     },
   ) => {
     setOrders((prev) =>
