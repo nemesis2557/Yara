@@ -79,7 +79,7 @@ export default function ListosPage() {
       fotoYapeUrl,
       nombreCliente: nombreCliente || undefined,
       cashierId: user.id,
-      cashierName: user.name || user.username || "Usuario",
+      cashierName: user.name ?? "Usuario",
     });
     resetModal();
   };
