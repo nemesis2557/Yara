@@ -86,7 +86,7 @@ export function MainLayout({ leftPanel, children }: MainLayoutProps) {
     addNote({
       text: newNoteText.trim(),
       createdById: user.id,
-      createdByName: user.name || user.username || "Usuario",
+      createdByName: user.name || "Usuario",
     });
     setNewNoteText("");
     toast("Nota creada correctamente", "success");
