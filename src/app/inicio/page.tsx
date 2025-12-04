@@ -1072,7 +1072,8 @@ export default function InicioPage() {
             <button
               type="button"
               onClick={handleCloseModal}
-              className="absolute right-3 top-3 text-gray-500 hover:text-gray-800"
+              aria-label="Cerrar detalle"
+              className="absolute right-3 top-3 z-20 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white/90 text-[#6B4423] shadow-md ring-1 ring-[#e4d6c5] hover:bg-white"
             >
               <X className="h-5 w-5" />
             </button>
