@@ -63,7 +63,7 @@ export default function AjustesPage() {
     );
   }
 
-  const handleGuardarCodigo = () => {
+  const handleGuardar = () => {
     if (!nuevoCodigo.trim()) {
       setMensaje("Ingrese un código válido.");
       return;
@@ -159,7 +159,7 @@ export default function AjustesPage() {
             />
             <button
               type="button"
-              onClick={handleGuardarCodigo}
+              onClick={handleGuardar}
               className="rounded-lg bg-[#6B4423] px-4 py-2 text-sm font-semibold text-white hover:bg-[#53351c]"
             >
               Guardar código
