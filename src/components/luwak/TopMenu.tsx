@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useAuth } from "@/components/auth/AuthProvider";
+import type { UserRole } from "@/types/luwak";
 
 export function TopMenu() {
   const { user } = useAuth();
@@ -10,11 +11,11 @@ export function TopMenu() {
 
   const links = (
     [
-      { href: "/inicio", label: "Inicio", roles: ["admin", "mesero", "ayudante", "chef"] },
-      { href: "/pedidos", label: "Pedidos", roles: ["admin", "mesero", "ayudante"] },
-      { href: "/listos", label: "Listos", roles: ["admin", "mesero", "cajero", "ayudante"] },
-      { href: "/pagados", label: "Pagados", roles: ["admin", "mesero", "cajero"] },
-    ] as const
+      { href: "/inicio", label: "Inicio", roles: ["admin", "mesero", "ayudante", "chef"] as UserRole[] },
+      { href: "/pedidos", label: "Pedidos", roles: ["admin", "mesero", "ayudante"] as UserRole[] },
+      { href: "/listos", label: "Listos", roles: ["admin", "mesero", "cajero", "ayudante"] as UserRole[] },
+      { href: "/pagados", label: "Pagados", roles: ["admin", "mesero", "cajero"] as UserRole[] },
+    ]
   ).filter((link) => link.roles.includes(user.role));
 
   if (links.length === 0) return null;

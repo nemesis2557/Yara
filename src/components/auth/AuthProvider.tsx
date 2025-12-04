@@ -22,6 +22,7 @@ interface AuthContextValue {
   user: User | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, passcode?: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -136,6 +137,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     saveUserToStorage(match.user);
   };
 
+  const register = async (email: string, password: string) => {
+    // Mock de registro: crear un usuario genérico mesero para flujo demo
+    const newUser: User = {
+      id: `u-${Date.now()}`,
+      name: email.split("@")[0],
+      email,
+      role: "mesero",
+    };
+    setUser(newUser);
+    saveUserToStorage(newUser);
+  };
+
   const logout = () => {
     setUser(null);
     saveUserToStorage(null);
@@ -145,6 +158,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user,
     isLoading,
     login,
+    register,
     logout,
   };
 

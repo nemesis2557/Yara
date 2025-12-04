@@ -75,13 +75,15 @@ export default function ListosPage() {
 
   const handleConfirm = () => {
     if (!selected || !paymentMethod) return;
+    const cashierName = user.name || user.email;
+
     registerPayment(selected.id, {
       method: paymentMethod,
       numeroOperacion: numeroOperacion || undefined,
       fotoYapeUrl,
       nombreCliente: nombreCliente || undefined,
       cashierId: user.id,
-      cashierName: user.name || user.username || "Usuario",
+      cashierName,
     });
     resetModal();
   };

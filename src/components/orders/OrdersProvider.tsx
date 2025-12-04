@@ -27,14 +27,14 @@ interface OrdersContextValue {
   registerPayment: (
     orderId: string,
     payload: {
-      method: PaymentMethod;
-      numeroOperacion?: string;
-      fotoYapeUrl?: string;
-      nombreCliente?: string;
-      cashierId?: string;
-      cashierName?: string;
-    },
-  ) => void;
+        method: PaymentMethod;
+        numeroOperacion?: string;
+        fotoYapeUrl?: string;
+        nombreCliente?: string;
+        cashierId: string;
+        cashierName: string;
+      },
+    ) => void;
   cancelOrder: (orderId: string) => void;
   addNote: (text: string) => void;
   deleteNote: (noteId: string) => void;
@@ -245,17 +245,24 @@ export function OrdersProvider({ children }: { children: ReactNode }) {
     );
   };
 
-  const registerPayment = (
-    orderId: string,
-    {
-      method,
-      numeroOperacion,
-      fotoYapeUrl,
-      nombreCliente,
-      cashierId,
-      cashierName,
-    },
-  ) => {
+    const registerPayment = (
+      orderId: string,
+      {
+        method,
+        numeroOperacion,
+        fotoYapeUrl,
+        nombreCliente,
+        cashierId,
+        cashierName,
+      }: {
+        method: PaymentMethod;
+        numeroOperacion?: string;
+        fotoYapeUrl?: string;
+        nombreCliente?: string;
+        cashierId: string;
+        cashierName: string;
+      },
+    ) => {
     setOrders((prev) =>
       prev.map((o) =>
         o.id === orderId

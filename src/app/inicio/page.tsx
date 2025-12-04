@@ -72,7 +72,7 @@ const CATEGORIAS: Categoria[] = [
    Productos (según carta, con imágenes)
    ───────────────────────────────────── */
 
-export const PRODUCTOS: Producto[] = [
+const PRODUCTOS: Producto[] = [
   // PREMIUM
   {
     id: "menu-5-tiempos",

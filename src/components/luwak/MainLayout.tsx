@@ -74,23 +74,23 @@ export function MainLayout({ leftPanel, children }: MainLayoutProps) {
     return now - created <= hours24;
   });
 
-  const handleCreateNote = () => {
-    if (!canCreateNote) {
-      toast("Usted no tiene permiso para crear notas", "warning");
-      return;
-    }
-    if (!newNoteText.trim()) {
-      toast("La nota no puede estar vacía", "warning");
-      return;
-    }
-    addNote({
-      text: newNoteText.trim(),
-      createdById: user.id,
-      createdByName: user.name || user.username || "Usuario",
-    });
-    setNewNoteText("");
-    toast("Nota creada correctamente", "success");
-  };
+    const handleCreateNote = () => {
+      if (!canCreateNote) {
+        toast("Usted no tiene permiso para crear notas", "warning");
+        return;
+      }
+      if (!newNoteText.trim()) {
+        toast("La nota no puede estar vacía", "warning");
+        return;
+      }
+      addNote({
+        text: newNoteText.trim(),
+        createdById: user.id,
+        createdByName: user.name || user.email,
+      });
+      setNewNoteText("");
+      toast("Nota creada correctamente", "success");
+    };
 
   const startEditNote = (id: string, currentText: string) => {
     if (!canEditNote) {

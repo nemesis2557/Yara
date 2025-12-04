@@ -23,8 +23,8 @@ export interface PaymentInfo {
   numeroOperacion?: string;
   fotoYapeUrl?: string;
   nombreCliente?: string;
-  cashierId?: string;
-  cashierName?: string;
+  cashierId: string;
+  cashierName: string;
 }
 
 export interface OrderItem {
