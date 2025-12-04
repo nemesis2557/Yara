@@ -6,10 +6,12 @@ import { MainLayout } from "@/components/luwak/MainLayout";
 import { useAuth } from "@/components/auth/AuthProvider";
 import type { UserRole } from "@/types/luwak";
 import { Lock } from "lucide-react";
-// 🔹 Aquí luego importas useOrders y tu tabla de pagados
+import { useOrders } from "@/components/orders/OrdersProvider";
+import { formatCurrency } from "@/lib/utils";
 
 export default function PagadosPage() {
   const { user } = useAuth();
+  const { orders } = useOrders();
   if (!user) return null;
 
   // MESERO / ADMIN / CAJERO pueden ver PAGADOS
@@ -37,15 +39,81 @@ export default function PagadosPage() {
     );
   }
 
+  const paidOrders = orders
+    .filter((o) => o.status === "paid")
+    .sort((a, b) => {
+      const dateA = new Date(a.paidAt ?? a.createdAt).getTime();
+      const dateB = new Date(b.paidAt ?? b.createdAt).getTime();
+      return dateB - dateA;
+    });
+
   return (
     <MainLayout>
-      {/* 🔽 Aquí va tu tabla de pedidos pagados (verde 🟩) */}
-      <h1 className="text-xl font-semibold text-[#6B4423] mb-4">
-        Pedidos pagados
-      </h1>
-      <p className="text-sm text-gray-600">
-        Aquí va la tabla de órdenes pagadas.
-      </p>
+      <div className="space-y-4">
+        <h1 className="text-xl font-semibold text-[#6B4423] mb-1">Pedidos pagados</h1>
+        <p className="text-sm text-gray-600">
+          Histórico de cobros con detalle de método de pago y cajero.
+        </p>
+
+        <div className="overflow-x-auto rounded-xl border border-[#efe2d2] bg-white shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-[#f7eee4] text-[#6B4423]">
+              <tr>
+                <th className="px-3 py-2 text-left"># Pedido</th>
+                <th className="px-3 py-2 text-left">Fecha</th>
+                <th className="px-3 py-2 text-left">Total</th>
+                <th className="px-3 py-2 text-left">Método</th>
+                <th className="px-3 py-2 text-left">Cajero</th>
+                <th className="px-3 py-2 text-left">N° operación</th>
+                <th className="px-3 py-2 text-left">Cliente</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paidOrders.length === 0 && (
+                <tr>
+                  <td colSpan={7} className="px-3 py-6 text-center text-gray-500">
+                    No hay pagos registrados.
+                  </td>
+                </tr>
+              )}
+
+              {paidOrders.map((order) => (
+                <tr key={order.id} className="border-t border-[#f1e3d4]">
+                  <td className="px-3 py-2 font-semibold text-[#6B4423]">
+                    #{order.orderNumber.toString().padStart(3, "0")}
+                  </td>
+                  <td className="px-3 py-2">
+                    {new Date(order.paidAt ?? order.createdAt).toLocaleString("es-PE", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </td>
+                  <td className="px-3 py-2 font-semibold text-[#6B4423]">
+                    {formatCurrency(order.total)}
+                  </td>
+                  <td className="px-3 py-2">
+                    <span className="inline-flex items-center rounded-full bg-green-50 px-2.5 py-1 text-xs font-semibold text-green-700">
+                      {order.paymentDetails?.method ?? "efectivo"}
+                    </span>
+                  </td>
+                  <td className="px-3 py-2">
+                    {order.paymentDetails?.cashierName ?? "—"}
+                  </td>
+                  <td className="px-3 py-2">
+                    {order.paymentDetails?.numeroOperacion ?? "—"}
+                  </td>
+                  <td className="px-3 py-2">
+                    {order.paymentDetails?.nombreCliente ?? "—"}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </MainLayout>
   );
 }
