@@ -18,6 +18,15 @@ export type OrderStatus =
 
 export type PaymentMethod = "efectivo" | "yape" | null;
 
+export interface PaymentInfo {
+  method: PaymentMethod;
+  numeroOperacion?: string;
+  fotoYapeUrl?: string;
+  nombreCliente?: string;
+  cashierId?: string;
+  cashierName?: string;
+}
+
 export interface OrderItem {
   id: string;
   productId: string;
@@ -38,6 +47,8 @@ export interface Order {
   createdByName: string;
   items: OrderItem[];
   paymentMethod: PaymentMethod;
+  paidAt?: string;
+  paymentDetails?: PaymentInfo;
 }
 
 export interface ItemCarrito {
